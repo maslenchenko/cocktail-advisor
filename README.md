@@ -23,8 +23,16 @@ cocktail_advisor/
 
 ## To start and use the application:
 1. Clone the repo
-2. Enter your OpenAI API Key in `app/chat/py`
-3. Run `uvicorn app.main:app --reload` from the `app` directory
+2. Install `requirements.txt`
+```
+pip install -r requirements.txt
+```
+4. Enter your OpenAI API Key in `app/chat/py`
+5. Run
+ ```
+ uvicorn app.main:app --reload
+ ```
+ from the `app` directory
 
 ## Preview:
 ![image_2025-01-31_19-04-52](https://github.com/user-attachments/assets/e3813f37-ed89-46a9-8937-eae75a4a01b2)
