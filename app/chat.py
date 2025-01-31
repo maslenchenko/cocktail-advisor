@@ -2,6 +2,7 @@ import openai
 import numpy as np
 from app.vector_db import search_cocktails, get_user_preferences, update_user_memory
 from app.vector_db import load_embeddings, save_embeddings
+from sentence_transformers import SentenceTransformer
 
 openai.api_key = 'API-KEY'
 
@@ -50,14 +51,15 @@ def generate_response(query: str, top_k=5):
     response_text = response['choices'][0]['message']['content'].strip()
 
     selected_cocktail = cocktail_results[0]
-    new_memory_vector = generate_memory_vector(selected_cocktail)
+    new_memory_vector = generate_memory_vector(selected_cocktail, query)
 
     update_user_memory_vector(new_memory_vector)
 
     return response_text
 
-def generate_memory_vector(cocktail):
-    cocktail_ingredients = cocktail['ingredients']
-    cocktail_ingredient_vector = np.mean([cocktail_embeddings.get(ingredient, np.zeros(512)) for ingredient in cocktail_ingredients], axis=0)
-
-    return cocktail_ingredient_vector
+def generate_memory_vector(selected_cocktail, user_query):
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    cocktail_ingredients = ', '.join(selected_cocktail['ingredients'])
+    combined_text = f"User Query: {user_query} Ingredients: {cocktail_ingredients}"
+    memory_vector = model.encode([combined_text], convert_to_numpy=True)
+    return memory_vector
